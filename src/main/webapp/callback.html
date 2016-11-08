@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>The World's Most Interesting Infographic</title>
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        // Extract fragment from URL
+        var fragment = location.hash.replace('#', '');
+
+        //Detectando a presença de resposta analisando o fragmento
+        if (fragment !== ""){
+          var responseProperties = fragment.split("&");
+          //isolando access token
+          var accessToken = "";
+          for(var i = 0; i<responseProperties.length; i++){
+            if(responseProperties[i].indexOf("access_token=")===0){
+              accessToken = responseProperties[i].split("=")[1];
+              $("#response").html("Access token: " + accessToken);
+
+              // Request profile data with access token
+              $.ajax({  type: "POST",
+                url: "https://graph.facebook.com/v2.8/me?fields=name",
+                headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                data: {access_token: encodeURIComponent(accessToken),method: "get"},
+                contentType: "application/x-www-form-urlencoded",
+                success: function(data) {
+                  $("#response").html("Hello, " + data.name + "!");}
+              });
+
+              break;
+            }
+          }
+        } else {
+          $("response").html("No response detected.");
+        }
+      });
+    </script>
+  </head>
+  <body>
+    Opa!
+    <div id="response"></div>
+  </body>
+</html>
